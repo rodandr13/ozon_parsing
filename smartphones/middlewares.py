@@ -2,8 +2,13 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from random import randint
+from time import sleep
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -61,6 +66,9 @@ class SmartphonesDownloaderMiddleware:
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
 
+    def __init__(self):
+        self.driver = webdriver.Chrome(service=Service("chromedriver.exe"))
+
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -69,16 +77,13 @@ class SmartphonesDownloaderMiddleware:
         return s
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
-
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
-        return None
+        self.driver.get(request.url)
+        sleep(randint(1, 3))
+        content = self.driver.page_source
+        self.driver.delete_all_cookies()
+        return HtmlResponse(
+            request.url, encoding="utf-8", body=content, request=request
+        )
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
