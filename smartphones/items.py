@@ -4,8 +4,19 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from itemloaders.processors import TakeFirst, MapCompose
+
+
+def clear_version(value):
+    result = value.replace("(EMUI 12)", "").replace(".x", "").strip()
+    return result.split()[-1]
 
 
 class SmartphonesItem(scrapy.Item):
-    os = scrapy.Field()
-    version = scrapy.Field()
+    os = scrapy.Field(
+        output_processor=TakeFirst()
+    )
+    version = scrapy.Field(
+        input_processor=MapCompose(clear_version),
+        output_processor=TakeFirst()
+    )

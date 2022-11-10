@@ -1,5 +1,5 @@
 import scrapy
-
+from scrapy.loader import ItemLoader
 from smartphones.items import SmartphonesItem
 
 
@@ -15,24 +15,29 @@ class SmartCrawlerSpider(scrapy.Spider):
         for link in links:
             clear_link = link.split("?")[0]
             self.smartphone_links.append(response.urljoin(clear_link))
-        if len(self.smartphone_links) <= 100:
+        if len(self.smartphone_links) <= 10:
             yield scrapy.Request(
                 url=response.urljoin(next_page),
                 callback=self.parse
             )
         else:
-            for link in self.smartphone_links[0:100]:
+            for link in self.smartphone_links[0:30]:
                 yield scrapy.Request(
                     url=link,
                     callback=self.parse_detail
                 )
 
     def parse_detail(self, response):
-        items = SmartphonesItem()
-        os = response.xpath("//dt[span[contains(text(), 'Операционная')]]/following-sibling::dd/a/text()").get()
-        version = response.xpath("//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/a/text()").get()
-        if not version:
-            version = response.xpath("//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/text()").get()
-        items["os"] = os
-        items["version"] = version
-        yield items
+        loader = ItemLoader(item=SmartphonesItem(), response=response)
+        os_xpath = "//dt[span[contains(text(), 'Операционная')]]/following-sibling::dd/a/text()"
+        version_xpath = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/text()"
+        version_xpath_with_tag_a = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/a/text()"
+
+        loader.add_xpath("os", os_xpath)
+        if response.xpath(version_xpath):
+            loader.add_xpath("version", version_xpath)
+        else:
+            loader.add_xpath("version", version_xpath_with_tag_a)
+
+        item = loader.load_item()
+        yield item
