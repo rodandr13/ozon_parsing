@@ -21,7 +21,7 @@ class SmartCrawlerSpider(scrapy.Spider):
                 callback=self.parse
             )
         else:
-            for link in self.smartphone_links[0:30]:
+            for link in self.smartphone_links[0:1]:
                 yield scrapy.Request(
                     url=link,
                     callback=self.parse_detail
@@ -30,14 +30,10 @@ class SmartCrawlerSpider(scrapy.Spider):
     def parse_detail(self, response):
         loader = ItemLoader(item=SmartphonesItem(), response=response)
         os_xpath = "//dt[span[contains(text(), 'Операционная')]]/following-sibling::dd/a/text()"
-        version_xpath = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/text()"
-        version_xpath_with_tag_a = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/a/text()"
+        version_xpath = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd"
 
         loader.add_xpath("os", os_xpath)
-        if response.xpath(version_xpath):
-            loader.add_xpath("version", version_xpath)
-        else:
-            loader.add_xpath("version", version_xpath_with_tag_a)
+        loader.add_xpath("version", version_xpath)
 
         item = loader.load_item()
         yield item
