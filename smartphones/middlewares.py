@@ -1,17 +1,10 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-from random import randint
-from time import sleep
-
 from scrapy import signals
 from scrapy.http import HtmlResponse
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+from random import randint
+from time import sleep
 
 
 class SmartphonesSpiderMiddleware:

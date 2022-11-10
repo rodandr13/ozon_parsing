@@ -1,5 +1,5 @@
 import pandas as pd
-from itemadapter import ItemAdapter
+
 
 class SmartphonesPipeline:
     items = []
@@ -14,4 +14,3 @@ class SmartphonesPipeline:
         with open("result.csv", "w", encoding="utf-8") as file:
             file.write(result.to_csv())
         print(result)
-
