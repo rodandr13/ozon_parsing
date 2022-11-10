@@ -1,5 +1,4 @@
 import scrapy
-import pprint
 
 from smartphones.items import SmartphonesItem
 
@@ -9,8 +8,6 @@ class SmartCrawlerSpider(scrapy.Spider):
     allowed_domains = ['ozon.ru']
     start_urls = ["https://www.ozon.ru/category/smartfony-15502/?sorting=rating"]
     smartphone_links = []
-    base_url = "https://www.ozon.ru"
-    os_ver = []
 
     def parse(self, response, **kwargs):
         links = response.xpath("//a[@class=\"tile-hover-target k8n\"]//@href").getall()
@@ -24,7 +21,7 @@ class SmartCrawlerSpider(scrapy.Spider):
                 callback=self.parse
             )
         else:
-            for link in self.smartphone_links:
+            for link in self.smartphone_links[0:100]:
                 yield scrapy.Request(
                     url=link,
                     callback=self.parse_detail
@@ -36,11 +33,6 @@ class SmartCrawlerSpider(scrapy.Spider):
         version = response.xpath("//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/a/text()").get()
         if not version:
             version = response.xpath("//dt[span[contains(text(), 'Версия')]]/following-sibling::dd/text()").get()
-        #self.os_ver.append({os, version, response.url})
-        #print(len(self.os_ver))
-        #print(self.os_ver)
-        for val in self.os_ver:
-            print(val)
         items["os"] = os
         items["version"] = version
         yield items
