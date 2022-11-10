@@ -7,6 +7,5 @@ import scrapy
 
 
 class SmartphonesItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    os = scrapy.Field()
+    version = scrapy.Field()
