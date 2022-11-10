@@ -78,7 +78,7 @@ class SmartphonesDownloaderMiddleware:
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
-        sleep(randint(1, 3))
+        sleep(randint(4, 5))
         content = self.driver.page_source
         self.driver.delete_all_cookies()
         return HtmlResponse(
