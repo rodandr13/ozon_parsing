@@ -29,7 +29,7 @@ class SmartCrawlerSpider(scrapy.Spider):
 
     def parse_detail(self, response):
         loader = ItemLoader(item=SmartphonesItem(), response=response)
-        os_xpath = "//dt[span[contains(text(), 'Операционная')]]/following-sibling::dd/a/text()"
+        os_xpath = "//dt[span[contains(text(), 'Операционная')]]/following-sibling::dd"
         version_xpath = "//dt[span[contains(text(), 'Версия')]]/following-sibling::dd"
 
         loader.add_xpath("os", os_xpath)

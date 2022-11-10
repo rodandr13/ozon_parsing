@@ -14,6 +14,7 @@ def clear_version(value):
 
 class SmartphonesItem(scrapy.Item):
     os = scrapy.Field(
+        input_processor=MapCompose(remove_tags),
         output_processor=TakeFirst()
     )
     version = scrapy.Field(
